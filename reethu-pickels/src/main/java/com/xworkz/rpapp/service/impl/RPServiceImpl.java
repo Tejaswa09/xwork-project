@@ -1,6 +1,8 @@
 package com.xworkz.rpapp.service.impl;
 
+import com.xworkz.rpapp.dto.LoginDto;
 import com.xworkz.rpapp.dto.UserDto;
+import com.xworkz.rpapp.entity.LoginEntity;
 import com.xworkz.rpapp.entity.UserEntity;
 import com.xworkz.rpapp.repo.RPRepo;
 import com.xworkz.rpapp.service.RPService;
@@ -9,8 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
+
 
 @Service
 public class RPServiceImpl implements RPService {
@@ -20,29 +23,102 @@ public class RPServiceImpl implements RPService {
     @Override
     public boolean signUp(UserDto dto) {
         UserEntity entity = new UserEntity();
-
-        BeanUtils.copyProperties(dto,entity,"dateOfBirth");
-
-        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate formatedDate= LocalDate.parse(dto.getDateOfBirth(),format);
-        entity.setDateOfBirth(formatedDate);
-        System.out.println(entity);
+        BeanUtils.copyProperties(dto, entity, "dateOfBirth");
+        entity.setDateOfBirth(StringToLastDate(dto.getDateOfBirth()));
         return repo.save(entity);
     }
 
     @Override
     public UserDto isEmailAvailble(String email) {
-        UserDto dto = new UserDto();
+        try {
+            UserDto dto = new UserDto();
+            UserEntity entity = repo.entityByEmail(email);
+            BeanUtils.copyProperties(entity, dto, "dateOfBirth");
+            dto.setDateOfBirth(entity.getDateOfBirth().toString());
 
-        BeanUtils.copyProperties(repo.isEmailAvailable(email),dto);
+            return dto;
+        } catch (NullPointerException e) {
+            return new UserDto();
+        }
 
-        return dto;
     }
 
     @Override
     public UserDto isMobileNumberAvailable(Long mobileNumber) {
-        UserDto dto = new UserDto();
-        BeanUtils.copyProperties(repo.isMobileNumberAvailable(mobileNumber),dto);
-        return dto;
+        try{
+            UserDto dto = new UserDto();
+            UserEntity entity = repo.entityByMobile(mobileNumber);
+            BeanUtils.copyProperties(entity, dto, "dateOfBirth");
+            dto.setDateOfBirth(entity.getDateOfBirth().toString());
+
+            return dto;
+        }catch (NullPointerException e){
+            return new UserDto();
+        }
+
+    }
+
+    @Override
+    public String  loginValidation(String emailOrMobileNumber, String password) {
+        String isEmailOrMobile = checkEmailOrMobile(emailOrMobileNumber);
+        UserEntity entity = new UserEntity();
+        System.out.println(isEmailOrMobile);
+
+        if(isEmailOrMobile.equals("Invalid Mobile")){
+            return isEmailOrMobile;
+        }else if (isEmailOrMobile.equals("Invalid email")){
+            return isEmailOrMobile;
+        }else{
+            if(emailOrMobileNumber.equals("mobile")){
+               entity= repo.entityByMobile(Long.parseLong(emailOrMobileNumber));
+               return validatePassword(entity,password,emailOrMobileNumber);
+            }else {
+                entity = repo.entityByEmail(emailOrMobileNumber);
+                return validatePassword(entity,password,emailOrMobileNumber);
+            }
+        }
+
+    }
+
+    //validation of the password
+    private String  validatePassword(UserEntity entity,String password,String emailOrMobileNumber) {
+        if(entity.getPassword().equals(password)) {
+            LoginEntity loginEntity = new LoginEntity();
+            LoginDto loginDto = new LoginDto();
+            loginDto.setSlNo(0);
+            loginDto.setEmailOrMobileNumber(emailOrMobileNumber);
+            loginDto.setPassword(password);
+            loginDto.setTime(LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm:ss a")));
+            loginDto.setDate(LocalDate.now().toString());
+            BeanUtils.copyProperties(loginDto,loginEntity);
+
+            repo.loginInfoSave(loginEntity);
+            return "login Successful";
+        }else{
+            return "login UnSuccessful";
+        }
+    }
+//check username is mobile or email
+    private String checkEmailOrMobile(String emailOrMobileNumber) {
+        if(emailOrMobileNumber.matches("\\d+")){
+            if(emailOrMobileNumber.matches("^[6-9]\\d{9}$")){
+                return "mobile";
+            }else {
+                return "Invalid Mobile";
+            }
+        }else{
+            if(emailOrMobileNumber.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")){
+                return "email";
+            }else {
+                return "Invalid email";
+            }
+        }
+    }
+
+
+
+    private LocalDate StringToLastDate(String dateOfBirth) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return LocalDate.parse(dateOfBirth, formatter);
     }
 }

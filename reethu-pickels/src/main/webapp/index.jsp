@@ -18,7 +18,7 @@
       <a class="navbar-brand mx-auto">
         <img src="Assets/reetho-logo-cropped.png" alt="center-logo" width="60px" height="50px" style="margin-left: -100px;">
       </a>
-      <a href="registerPage"><button type="button" class="btn btn-outline-warning">Register</button></a>
+      <a href="loginPage"><button type="button" class="btn btn-outline-warning">Login</button></a>
     </div>
   </nav>
 

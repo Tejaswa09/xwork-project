@@ -1,5 +1,6 @@
 package com.xworkz.rpapp.repo.impl;
 
+import com.xworkz.rpapp.entity.LoginEntity;
 import com.xworkz.rpapp.entity.UserEntity;
 import com.xworkz.rpapp.repo.RPRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class RPRepoImpl implements RPRepo {
     }
 
     @Override
-    public UserEntity isEmailAvailable(String email) {
+    public UserEntity entityByEmail(String email) {
 
         try {
             EntityManager manager = factory.createEntityManager();
@@ -40,15 +41,33 @@ public class RPRepoImpl implements RPRepo {
     }
 
     @Override
-    public UserEntity isMobileNumberAvailable(Long mobileNumber) {
+    public UserEntity entityByMobile(Long mobileNumber) {
         try {
             EntityManager manager = factory.createEntityManager();
             Query query =manager.createNamedQuery("getDetailsByMobileNumber");
             query.setParameter("mobileNumber",mobileNumber);
-            return (UserEntity) query.getSingleResult();
+            entity=(UserEntity) query.getSingleResult();
+
+            return entity;
         }catch (NoResultException e){
 
             return new UserEntity();
         }
     }
+
+    @Override
+    public void loginInfoSave(LoginEntity loginEntity) {
+
+        try{
+            EntityManager manager = factory.createEntityManager();
+            manager.getTransaction().begin();
+            manager.persist(loginEntity);
+            manager.getTransaction().commit();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+
 }

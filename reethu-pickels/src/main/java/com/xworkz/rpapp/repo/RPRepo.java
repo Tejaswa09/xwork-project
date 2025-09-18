@@ -1,11 +1,15 @@
 package com.xworkz.rpapp.repo;
 
+import com.xworkz.rpapp.dto.LoginDto;
+import com.xworkz.rpapp.entity.LoginEntity;
 import com.xworkz.rpapp.entity.UserEntity;
 
 public interface RPRepo {
     boolean save(UserEntity entity);
 
-    UserEntity isEmailAvailable(String email);
+    UserEntity entityByEmail(String email);
 
-    UserEntity isMobileNumberAvailable(Long mobileNumber);
+    UserEntity entityByMobile(Long mobileNumber);
+
+    void loginInfoSave(LoginEntity loginDto);
 }

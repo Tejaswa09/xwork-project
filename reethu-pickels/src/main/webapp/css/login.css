@@ -1,0 +1,50 @@
+html,
+body {
+    height: 100%;
+    /* Ensure the body and html take up the full height of the viewport */
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    /* Stack content vertically */
+}
+
+.navbar {
+    height: 60px;
+    background-color: rgba(24, 23, 23, 0.45);
+
+}
+
+#footer {
+    background-color: rgba(24, 23, 23, 0.45);
+}
+
+#divForNav {
+    margin-top: -5px;
+    padding-left: 10px;
+}
+
+#xworkz-logo {
+    margin-left: 5px;
+}
+
+.inline{
+    display: inline;
+}
+.center{
+    margin-left: 36%;
+}
+.end{
+    margin-left:30%;
+}
+
+.divForLogin{
+    margin-top :15%;
+    margin-left :35%;
+    margin-right: 40%;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    border-radius: 20px;
+}
+.formClass{
+    padding: 20px;
+
+}
