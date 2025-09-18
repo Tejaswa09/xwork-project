@@ -1,16 +1,16 @@
 package com.xworkz.rpapp.controller;
 
+import com.xworkz.rpapp.dto.LoginDto;
 import com.xworkz.rpapp.dto.UserDto;
 import com.xworkz.rpapp.service.RPService;
+import com.xworkz.rpapp.service.impl.RPServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashMap;
@@ -21,9 +21,9 @@ public class ReethuPickelsController {
     @Autowired
     RPService service;
 
-    @GetMapping("registerPage")
+    @GetMapping("loginPage")
     public String redirectToRegisterPage(){
-        return "signUp";
+        return "login";
     }
 
     @PostMapping("signUp")
@@ -32,11 +32,14 @@ public class ReethuPickelsController {
             HashMap<String,String> errors = new HashMap<>();
             for(FieldError error: bindingResult.getFieldErrors()){
                 errors.put(error.getField(),error.getDefaultMessage());
+                System.out.println(errors.get(error.getField()));
             }
+
+
             return "signUp";
         }
         service.signUp(dto);
-        return "response";
+        return "login";
     }
 
     @GetMapping("isEmailAvailable")
@@ -58,21 +61,13 @@ public class ReethuPickelsController {
         return ResponseEntity.ok("Mobile Number is not Available");
     }
 
-    @GetMapping("checkEmailAvailableForLogin")
-    public ResponseEntity<UserDto> checkEmailAvailableForLogin(@RequestParam("email") String email){
-        UserDto dto = service.isEmailAvailble(email);
-        if (dto.getId() != 0){
-            return ResponseEntity.ok(dto);
-        }
-        return ResponseEntity.ok(dto);
+    @PostMapping("loginValidation")
+    public ResponseEntity<String> loginValidation(@RequestParam("emailOrMobileNumber") String emailOrMobileNumber,@RequestParam("password") String password){
+        
     }
 
-    @GetMapping("checkMobileAvailableForLogin")
-    public ResponseEntity<UserDto> checkMobileAvailableForLogin(@RequestParam("mobileNumber") Long mobileNumber){
-        UserDto dto = service.isMobileNumberAvailable(mobileNumber);
-        if (dto.getId() != 0){
-            return ResponseEntity.ok(dto);
-        }
-        return ResponseEntity.ok(dto);
+    @PostMapping("directToHome")
+    public String loginToHome(){
+        return "index";
     }
 }
