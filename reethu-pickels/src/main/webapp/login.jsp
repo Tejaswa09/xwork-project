@@ -1,3 +1,7 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page  isELIgnored="false" %>
+<%@ taglib prefix="c" uri = "http://java.sun.com/jsp/jstl/core" %>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -32,19 +36,22 @@
     </nav>
 
     <div class="divForLogin">
-        <form class="loginValidation">
+        <form class="formClass" action="loginValidation" method="post">
             <!-- UserName -->
             <h4 class="text-center">Login</h4>
             <br>
             <div><input type="text" class="form-control" placeholder="Email or Mobile Number" aria-label="Username"
-                    name="username" id="username" required>
-                <div id="usernameMessage" class="invalid-feedback"></div>
+                    name="emailOrMobileNumber" id="username" value="${email}"required>
+
+            <div id="usernameMessage" class="invalid-feedback"></div>
+
             </div>
             <br>
+
             <!-- Password -->
 
             <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
+
                 <div class="input-group">
                     <input type="password"
                            class="form-control"
@@ -56,15 +63,12 @@
                         <i class="bi bi-eye-slash"></i>
                     </button>
                 </div>
-                <div id="msgForPassword" class="invalid-feedback">
-                    </div>
+                <div style="color:red">${ passwordStatusMessage }</div>
             </div>
-
-
 
             <br>
             <div>
-                <button type="button" class="btn btn-primary w-100" id="loginButton">Login</button>
+                <button type="submit" class="btn btn-primary w-100" id="loginButton">Login</button>
             </div>
 
             <div style="margin-top: 5px;">

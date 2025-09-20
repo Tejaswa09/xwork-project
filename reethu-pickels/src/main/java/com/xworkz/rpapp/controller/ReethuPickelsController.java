@@ -1,13 +1,12 @@
 package com.xworkz.rpapp.controller;
 
-import com.xworkz.rpapp.dto.LoginDto;
+
 import com.xworkz.rpapp.dto.UserDto;
 import com.xworkz.rpapp.service.RPService;
-import com.xworkz.rpapp.service.impl.RPServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -62,8 +61,22 @@ public class ReethuPickelsController {
     }
 
     @PostMapping("loginValidation")
-    public ResponseEntity<String> loginValidation(@RequestParam("emailOrMobileNumber") String emailOrMobileNumber,@RequestParam("password") String password){
-        
+    public String loginValidation(@RequestParam("emailOrMobileNumber") String emailOrMobileNumber, @RequestParam("password") String password, Model model){
+       String statusMessage= service.loginValidation(emailOrMobileNumber,password);
+       model.addAttribute("email",emailOrMobileNumber);
+       model.addAttribute("statusMessage",statusMessage);
+       if(statusMessage.equals("Username not found")){
+           return "login";
+       }else if(statusMessage.equals("Invalid Mobile") || statusMessage.equals("Invalid email")){
+            return "login";
+        }else if(statusMessage.equals("login UnSuccessful")){
+            model.addAttribute("passwordStatusMessage","Incorrect Password");
+            return "login";
+        }else{
+            model.addAttribute("statusMessage","");
+           model.addAttribute("passwordStatusMessage","");
+            return "dashboard";
+        }
     }
 
     @PostMapping("directToHome")

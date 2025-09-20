@@ -61,16 +61,15 @@ public class RPServiceImpl implements RPService {
     @Override
     public String  loginValidation(String emailOrMobileNumber, String password) {
         String isEmailOrMobile = checkEmailOrMobile(emailOrMobileNumber);
-        UserEntity entity = new UserEntity();
-        System.out.println(isEmailOrMobile);
+        UserEntity entity;
 
         if(isEmailOrMobile.equals("Invalid Mobile")){
             return isEmailOrMobile;
         }else if (isEmailOrMobile.equals("Invalid email")){
             return isEmailOrMobile;
         }else{
-            if(emailOrMobileNumber.equals("mobile")){
-               entity= repo.entityByMobile(Long.parseLong(emailOrMobileNumber));
+            if(isEmailOrMobile.equals("mobile")){
+               entity= repo.entityByMobile(Long.valueOf(emailOrMobileNumber));
                return validatePassword(entity,password,emailOrMobileNumber);
             }else {
                 entity = repo.entityByEmail(emailOrMobileNumber);
@@ -82,20 +81,24 @@ public class RPServiceImpl implements RPService {
 
     //validation of the password
     private String  validatePassword(UserEntity entity,String password,String emailOrMobileNumber) {
-        if(entity.getPassword().equals(password)) {
-            LoginEntity loginEntity = new LoginEntity();
-            LoginDto loginDto = new LoginDto();
-            loginDto.setSlNo(0);
-            loginDto.setEmailOrMobileNumber(emailOrMobileNumber);
-            loginDto.setPassword(password);
-            loginDto.setTime(LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm:ss a")));
-            loginDto.setDate(LocalDate.now().toString());
-            BeanUtils.copyProperties(loginDto,loginEntity);
+        try{
+            if(entity.getPassword().equals(password)) {
+                LoginEntity loginEntity = new LoginEntity();
+                LoginDto loginDto = new LoginDto();
+                loginDto.setSlNo(0);
+                loginDto.setEmailOrMobileNumber(emailOrMobileNumber);
+                loginDto.setPassword(password);
+                loginDto.setTime(LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm:ss a")));
+                loginDto.setDate(LocalDate.now().toString());
+                BeanUtils.copyProperties(loginDto,loginEntity);
 
-            repo.loginInfoSave(loginEntity);
-            return "login Successful";
-        }else{
-            return "login UnSuccessful";
+                repo.loginInfoSave(loginEntity);
+                return "login Successful";
+            }else{
+                return "login UnSuccessful";
+            }
+        }catch(NullPointerException e){
+            return "Username not found";
         }
     }
 //check username is mobile or email
