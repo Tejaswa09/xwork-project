@@ -6,6 +6,8 @@ import com.xworkz.rpapp.entity.LoginEntity;
 import com.xworkz.rpapp.entity.UserEntity;
 import com.xworkz.rpapp.repo.RPRepo;
 import com.xworkz.rpapp.service.RPService;
+import com.xworkz.rpapp.utils.EmailSender;
+import com.xworkz.rpapp.utils.Otp;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,12 @@ import java.time.format.DateTimeFormatter;
 public class RPServiceImpl implements RPService {
     @Autowired
     RPRepo repo;
+
+    @Autowired
+    EmailSender emailSender;
+
+    @Autowired
+    Otp otp;
 
     @Override
     public boolean signUp(UserDto dto) {
@@ -77,6 +85,13 @@ public class RPServiceImpl implements RPService {
             }
         }
 
+    }
+
+    @Override
+    public boolean genarateAndSendOtp(String email) {
+        String generatedOtp=otp.otpGenerator();
+        emailSender.simpleMessage(email,"OTP",generatedOtp);
+        return false;
     }
 
     //validation of the password

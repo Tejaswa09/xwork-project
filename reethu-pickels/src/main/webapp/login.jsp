@@ -31,7 +31,7 @@
                 <img src="Assets/reetho-logo-cropped.png" alt="center-logo" width="60px" height="50px"
                     style="margin-left: -100px;">
             </a>
-            <button type="button" class="btn btn-outline-warning" onclick="">Home</button>
+          <a href="toHome"><button type="button" class="btn btn-outline-warning">Home</button></a>
         </div>
     </nav>
 
@@ -64,15 +64,17 @@
                     </button>
                 </div>
                 <div style="color:red">${ passwordStatusMessage }</div>
+                <div style="margin-top: 5px;">
+                    <a href="toforgotPassword">forgot password</a>
+                </div>
             </div>
-
-            <br>
             <div>
                 <button type="submit" class="btn btn-primary w-100" id="loginButton">Login</button>
             </div>
 
             <div style="margin-top: 5px;">
-                <a href="#">forgot password</a>
+                <label for="dontHaveAccount">Don't have account?</label>
+                <a href="toSignUp">Register</a>
             </div>
         </form>
 

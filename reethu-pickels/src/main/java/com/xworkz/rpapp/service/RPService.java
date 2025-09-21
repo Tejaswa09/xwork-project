@@ -11,4 +11,6 @@ public interface RPService {
     UserDto isMobileNumberAvailable(Long mobileNumber);
 
     String loginValidation(String emailOrMobileNumber,String password);
+
+    boolean genarateAndSendOtp(String email);
 }
