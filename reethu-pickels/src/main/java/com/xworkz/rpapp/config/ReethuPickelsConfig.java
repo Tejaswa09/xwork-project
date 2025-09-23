@@ -20,7 +20,7 @@ import java.util.Properties;
 
 @Configuration
 @ComponentScan(basePackages = "com.xworkz.rpapp")
-@PropertySource("classpath:application.properties")
+
 @EnableWebMvc
 public class ReethuPickelsConfig implements  WebMvcConfigurer {
     @Autowired
@@ -51,23 +51,7 @@ public class ReethuPickelsConfig implements  WebMvcConfigurer {
         return dataSource;
     }
 
-    @Bean
-    public JavaMailSender getJavaMailSender() {
-        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setHost(environment.getProperty("spring.mail.host"));
-        mailSender.setPort(587);
 
-        mailSender.setUsername(environment.getProperty("spring.mail.username"));
-        mailSender.setPassword(environment.getProperty("spring.mail.password"));
-
-        Properties props = mailSender.getJavaMailProperties();
-        props.put("mail.transport.protocol", "smtp");
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.debug", "true");
-
-        return mailSender;
-    }
     @Override
     public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
         configurer.enable();
