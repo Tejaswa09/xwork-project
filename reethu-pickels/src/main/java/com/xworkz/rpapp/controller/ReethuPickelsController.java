@@ -79,10 +79,36 @@ public class ReethuPickelsController {
         }
     }
 
-    @GetMapping("sendOtp")
-    public String sendOtp(String email){
-        service.genarateAndSendOtp(email);
-        return "forgotPassword";
+    @PostMapping("sendOtp")
+    public String sendOtp(String email, Model model){
+        boolean isOtpSent = service.genarateAndSendOtp(email);
+        model.addAttribute("emailForForgotPass",email);
+        if(isOtpSent){
+
+            model.addAttribute("mailSendStatus",true);
+            model.addAttribute("toastMsg",true);
+            return "forgotPassword";
+        }else {
+
+            model.addAttribute("mailSendStatus",false);
+            return "forgotPassword";
+        }
+
+    }
+
+    @GetMapping("validateOtp")
+    public String validateOtp(@RequestParam String otp,@RequestParam("email") String email, Model model){
+
+        boolean isOtpValid =service.vaidateOtp(otp,email);
+
+        model.addAttribute("mailSendStatus",true);
+        model.addAttribute("emailForForgotPass",email);
+        if(isOtpValid){
+            return "dashboard";
+        }else {
+            model.addAttribute("isOtpValid","false");
+            return "forgotPassword";
+        }
     }
 
     //    Redirect Codes

@@ -13,4 +13,6 @@ public interface RPService {
     String loginValidation(String emailOrMobileNumber,String password);
 
     boolean genarateAndSendOtp(String email);
+
+    boolean vaidateOtp(String otp,String email);
 }

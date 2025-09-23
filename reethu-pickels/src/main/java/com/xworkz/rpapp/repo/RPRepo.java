@@ -12,4 +12,6 @@ public interface RPRepo {
     UserEntity entityByMobile(Long mobileNumber);
 
     void loginInfoSave(LoginEntity loginDto);
+
+    void updateOtp(String email,String generatedOtp);
 }

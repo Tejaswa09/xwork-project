@@ -69,5 +69,23 @@ public class RPRepoImpl implements RPRepo {
 
     }
 
+    @Override
+    public void updateOtp(String email,String generatedOtp) {
+        try {
+            EntityManager manager = factory.createEntityManager();
+            UserEntity entity =entityByEmail(email);
+
+            if (entity!= null){
+                manager.getTransaction().begin();
+                entity.setOtp(generatedOtp);
+                manager.merge(entity);
+                manager.getTransaction().commit();
+            }
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
 
 }

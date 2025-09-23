@@ -10,6 +10,7 @@ import com.xworkz.rpapp.utils.EmailSender;
 import com.xworkz.rpapp.utils.Otp;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -89,8 +90,26 @@ public class RPServiceImpl implements RPService {
 
     @Override
     public boolean genarateAndSendOtp(String email) {
-        String generatedOtp=otp.otpGenerator();
-        emailSender.simpleMessage(email,"OTP",generatedOtp);
+        try{
+            String generatedOtp=otp.otpGenerator();
+            String mailBody ="Otp for reset password is "+generatedOtp;
+            repo.updateOtp(email,generatedOtp);
+            emailSender.simpleMessage(email,"forgot password",mailBody);
+            return true;
+        }catch(MailException e){
+            System.err.println(e.getMessage());
+            return false;
+        }
+
+    }
+
+    @Override
+    public boolean vaidateOtp(String otp, String email) {
+        UserEntity entity = repo.entityByEmail(email);
+
+        if (entity.getOtp().equals(otp)){
+            return true;
+        }
         return false;
     }
 

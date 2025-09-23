@@ -54,4 +54,7 @@ public class UserEntity {
 
     @Column(name="Password")
     private String password;
+
+    @Column(name = "Otp")
+    private String otp;
 }
