@@ -4,23 +4,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
-import java.util.Properties;
-
 @Configuration
 @ComponentScan(basePackages = "com.xworkz.rpapp")
-
 @EnableWebMvc
 public class ReethuPickelsConfig implements  WebMvcConfigurer {
     @Autowired
@@ -47,10 +43,12 @@ public class ReethuPickelsConfig implements  WebMvcConfigurer {
         dataSource.setUrl("jdbc:mysql://localhost:3306/rp");
         dataSource.setUsername(environment.getProperty("jdbc.username"));
         dataSource.setPassword(environment.getProperty("jdbc.password"));
-
         return dataSource;
     }
-
+    @Bean
+    public PasswordEncoder getHashedPass(){
+       return new BCryptPasswordEncoder();
+    }
 
     @Override
     public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {

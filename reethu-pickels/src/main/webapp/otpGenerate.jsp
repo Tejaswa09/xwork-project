@@ -58,7 +58,7 @@
         </form>
         </div>
 
-<form action="validateOtp">
+<form action="validateOtp" method="post">
 <div class="row justify-content-left mt-3" id="divForOtp">
             <div class="col">
                 <div class="card p-4 text-center">

@@ -11,6 +11,7 @@ import com.xworkz.rpapp.utils.Otp;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -20,6 +21,9 @@ import java.time.format.DateTimeFormatter;
 
 @Service
 public class RPServiceImpl implements RPService {
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     @Autowired
     RPRepo repo;
 
@@ -32,6 +36,8 @@ public class RPServiceImpl implements RPService {
     @Override
     public boolean signUp(UserDto dto) {
         UserEntity entity = new UserEntity();
+
+        dto.setPassword(passwordEncoder.encode(dto.getPassword()));
         BeanUtils.copyProperties(dto, entity, "dateOfBirth");
         entity.setDateOfBirth(StringToLastDate(dto.getDateOfBirth()));
         return repo.save(entity);
@@ -93,8 +99,9 @@ public class RPServiceImpl implements RPService {
         try{
             String generatedOtp=otp.otpGenerator();
             String mailBody ="Otp for reset password is "+generatedOtp;
-            repo.updateOtp(email,generatedOtp);
+
             emailSender.simpleMessage(email,"forgot password",mailBody);
+            repo.updateOtp(email,passwordEncoder.encode(generatedOtp));
             return true;
         }catch(MailException e){
             System.err.println(e.getMessage());
@@ -107,7 +114,7 @@ public class RPServiceImpl implements RPService {
     public boolean vaidateOtp(String otp, String email) {
         UserEntity entity = repo.entityByEmail(email);
 
-        if (entity.getOtp().equals(otp)){
+        if (passwordEncoder.matches(otp,entity.getOtp())){
             return true;
         }
         return false;
@@ -116,12 +123,12 @@ public class RPServiceImpl implements RPService {
     //validation of the password
     private String  validatePassword(UserEntity entity,String password,String emailOrMobileNumber) {
         try{
-            if(entity.getPassword().equals(password)) {
+            if(passwordEncoder.matches(password,entity.getPassword())) {
                 LoginEntity loginEntity = new LoginEntity();
                 LoginDto loginDto = new LoginDto();
                 loginDto.setSlNo(0);
                 loginDto.setEmailOrMobileNumber(emailOrMobileNumber);
-                loginDto.setPassword(password);
+                loginDto.setPassword(entity.getPassword());
                 loginDto.setTime(LocalTime.now().format(DateTimeFormatter.ofPattern("hh:mm:ss a")));
                 loginDto.setDate(LocalDate.now().toString());
                 BeanUtils.copyProperties(loginDto,loginEntity);

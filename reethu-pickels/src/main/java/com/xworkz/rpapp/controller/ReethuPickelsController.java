@@ -17,13 +17,10 @@ import java.util.HashMap;
 @Controller
 @RequestMapping("/")
 public class ReethuPickelsController {
+
     @Autowired
     RPService service;
 
-    @GetMapping("loginPage")
-    public String redirectToRegisterPage() {
-        return "login";
-    }
 
     @PostMapping("signUp")
     public String signUp(@Valid UserDto dto, BindingResult bindingResult) {
@@ -84,19 +81,19 @@ public class ReethuPickelsController {
         boolean isOtpSent = service.genarateAndSendOtp(email);
         model.addAttribute("emailForForgotPass",email);
         if(isOtpSent){
-
             model.addAttribute("mailSendStatus",true);
             model.addAttribute("toastMsg",true);
-            return "forgotPassword";
+            return "otpGenerate";
         }else {
 
             model.addAttribute("mailSendStatus",false);
-            return "forgotPassword";
+            return "otpGenerate";
         }
 
     }
 
-    @GetMapping("validateOtp")
+
+    @PostMapping("validateOtp")
     public String validateOtp(@RequestParam String otp,@RequestParam("email") String email, Model model){
 
         boolean isOtpValid =service.vaidateOtp(otp,email);
@@ -107,7 +104,7 @@ public class ReethuPickelsController {
             return "dashboard";
         }else {
             model.addAttribute("isOtpValid","false");
-            return "forgotPassword";
+            return "otpGenerate";
         }
     }
 
@@ -119,7 +116,7 @@ public class ReethuPickelsController {
 
     @GetMapping("toforgotPassword")
     public String toForgotPasswordPage() {
-        return "forgotPassword";
+        return "otpGenerate";
     }
 
     @GetMapping("toHome")
@@ -130,5 +127,6 @@ public class ReethuPickelsController {
     public String toSignUp(){
         return "signUp";
     }
+
 }
 
